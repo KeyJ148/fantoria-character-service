@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: fantoria-character-service
+
+  jpa:
+    database: POSTGRESQL
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  liquibase:
+    change-log: db/liquibase-master.yaml
