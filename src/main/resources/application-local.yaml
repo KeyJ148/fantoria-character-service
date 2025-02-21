@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    bootstrap:
+      enabled: false
+    config:
+      enabled: false
+    discovery:
+      enabled: false
