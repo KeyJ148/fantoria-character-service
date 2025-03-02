@@ -1,0 +1,49 @@
+services:
+  app:
+    build: .
+    container_name: fantoria-character-service-app
+    networks:
+      - fantoria
+      - internal
+    environment:
+      - 'SPRING_PROFILES_ACTIVE=local'
+      - 'SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/fantoria_character_db?currentSchema=fantoria_character'
+      - 'SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}'
+      - 'SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}'
+      - 'SPRING_DATA_REDIS_HOST=redis'
+      - 'SPRING_DATA_REDIS_PORT=6379'
+      - 'SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}'
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      - db
+      - redis
+    restart: always
+  db:
+    image: 'postgres:17.5'
+    container_name: fantoria-character-service-db
+    networks:
+      - internal
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - 'POSTGRES_DB=fantoria_character_db'
+      - 'POSTGRES_USER=${POSTGRES_USER}'
+      - 'POSTGRES_PASSWORD=${POSTGRES_PASSWORD}'
+    restart: always
+  redis:
+    image: 'redis:8.0'
+    container_name: fantoria-character-service-redis
+    networks:
+      - internal
+    command: '--requirepass ${REDIS_PASSWORD}'
+    restart: always
+
+networks:
+  internal:
+  fantoria:
+    name: fantoria_default
+    external: true
