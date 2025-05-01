@@ -83,7 +83,6 @@ tasks.register("dockerPrintImageName") {
 
 tasks.register<Exec>("dockerBuild") {
     group = "docker"
-    dependsOn("bootJar")
     commandLine("docker", "build", "-t", imageName, ".")
 }
 
