@@ -9,7 +9,6 @@ plugins {
 
 group = "cc.abro"
 version = "0.1.0-SNAPSHOT"
-val imageName = "${project.name}:${project.version}"
 
 java {
     toolchain {
@@ -74,34 +73,4 @@ tasks.named<BootJar>("bootJar") {
     archiveFileName.set("app.jar")
 }
 
-tasks.register("dockerPrintImageName") {
-    group = "docker"
-    doLast {
-        print(imageName)
-    }
-}
-
-tasks.register<Exec>("dockerBuild") {
-    group = "docker"
-    commandLine("docker", "build", "-t", imageName, ".")
-}
-
-tasks.register<Exec>("dockerComposeUp") {
-    group = "docker"
-    dependsOn("dockerBuild")
-    commandLine("docker-compose", "up", "-d")
-}
-
-tasks.register<Exec>("dockerComposePortsUp") {
-    group = "docker"
-    dependsOn("dockerBuild")
-    commandLine("docker-compose",
-        "-f", "docker-compose.yaml",
-        "-f", "docker-compose.ports.yaml",
-        "up", "-d")
-}
-
-tasks.register<Exec>("dockerComposeDown") {
-    group = "docker"
-    commandLine("docker-compose", "down")
-}
+apply(from = "docker.gradle.kts")
